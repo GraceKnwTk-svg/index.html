@@ -14,6 +14,9 @@ function initDateTime() {
     document.getElementById('time').value = `${hours}:${minutes}`;
 }
 
+// สั่งให้ระบบทำงานทันทีที่โหลดไฟล์ JavaScript นี้เสร็จ
+initDateTime();
+
 function generateReport() {
     // 1. ดึงค่าจากฟอร์มฝั่งซ้ายมาเก็บไว้
     const hub = document.getElementById('hub').value || '-';
