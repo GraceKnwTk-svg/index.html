@@ -1,3 +1,19 @@
+// ฟังก์ชันสำหรับตั้งค่า วันที่ และ เวลา ปัจจุบันโดยอัตโนมัติเมื่อเปิดเว็บ
+function initDateTime() {
+    const now = new Date();
+    
+    // ตั้งค่าวันที่ (รูปแบบ YYYY-MM-DD สำหรับอินพุตประเภท date)
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    document.getElementById('date').value = `${year}-${month}-${day}`;
+    
+    // ตั้งค่าเวลา (รูปแบบ HH:MM สำหรับอินพุตประเภท time)
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('time').value = `${hours}:${minutes}`;
+}
+
 function generateReport() {
     // 1. ดึงค่าจากฟอร์มฝั่งซ้ายมาเก็บไว้
     const hub = document.getElementById('hub').value || '-';
@@ -15,28 +31,22 @@ function generateReport() {
     const action = document.getElementById('action').value || '-';
 
     // 2. [สูตรคำนวณอัตโนมัติ] 
-    // คำนวณงานที่ไม่ได้จ่าย (No Assign)
     const noAssign = inHub - assign; 
-    
-    // คำนวณจำนวนคนขับทั้งหมด (HC Active)
     const hcActive = actual2w + actual4w; 
     
-    // คำนวณเปอร์เซ็นต์การส่งสำเร็จ % Delivered
     let deliveryRate = 0;
     if (assign > 0) {
         deliveryRate = ((delivered / assign) * 100).toFixed(1);
     }
 
-    // คำนวณ Workload เฉลี่ย (WL เฉลี่ย 70:30) ตามสัดส่วนคนขับ
+    // คำนวณ Workload เฉลี่ย (WL เฉลี่ย 70:30)
     let wl2w = 0;
     let wl4w = 0;
-    if (hcActive > 0) {
-        // คิดสัดส่วนจากยอด Assign ทั้งหมดตามสัดส่วนจำนวนคน
-        wl2w = Math.round((assign * 0.7)); // สัดส่วนเป้าหมาย 70% หรือตามงานจริง
-        wl4w = Math.round((assign * 0.3)); // สัดส่วนเป้าหมาย 30% หรือตามงานจริง
+    if (assign > 0) {
+        wl2w = Math.round(assign * 0.7);
+        wl4w = Math.round(assign * 0.3);
     }
 
-    // คำนวณค่า PDTY Assign (งานเฉลี่ยต่อคน) = ยอด Assign หารด้วย คนขับทั้งหมด
     let pdtyAssign = 0;
     if (hcActive > 0) {
         pdtyAssign = Math.round(assign / hcActive);
@@ -50,7 +60,7 @@ function generateReport() {
         formattedDate = `${String(d.getDate()).padStart(2, '0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
 
-    // 4. แสดงผลลัพธ์ในช่องด้านขวา (Result) ตามโครงสร้างในรูปภาพเป๊ะๆ
+    // 4. แสดงผลลัพธ์ในช่องด้านขวา (Result)
     const textOutput = `Daily Report - ${formattedDate} (${time})
 Hub : ${hub}
 
@@ -74,7 +84,7 @@ WL เฉลี่ย 70:30
 • 4W : 30%
 
 SLA : 96.00%
-PDTY Assign : ${pdtyAssign} (Target:170)
+PDTY Assign : ${pdtyAssign} (Target: 170)
 
 Issue หน้างาน : ${issue}
 Action : ${action}`;
@@ -104,5 +114,9 @@ function clearReport() {
         document.getElementById('issue').value = '';
         document.getElementById('action').value = '';
         document.getElementById('resultBox').value = '';
+        
+        // ล้างแล้วรีเซ็ตวันเวลาปัจจุบันให้ใหม่ทันที
+        initDateTime();
+        document.getElementById('hub').value = 'ABYAI-B';
     }
 }
