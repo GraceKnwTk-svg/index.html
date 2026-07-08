@@ -6,34 +6,74 @@
     <title>Daily Report Generator</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
 <body onload="initDateTime()">
+
     <div class="container">
+        <!-- ฝั่งซ้าย: ฟอร์มกรอกข้อมูล -->
         <div class="form-section">
             <h2 class="title">📊 Daily Report Generator</h2>
             <p class="subtitle">By MAX HBYAI-C</p>
+            
             <form id="reportForm">
-                <div class="form-group"><label>Hub</label><input type="text" id="hub" value="HBYAI-C"></div>
-                <div class="form-group"><label>Date</label><input type="date" id="date" value="2026-07-08"></div>
-                <div class="form-group"><label>Time</label><input type="time" id="time" value="14:42"></div>
-                <div class="form-group"><label>In Hub</label><input type="number" id="inHub" placeholder="กรอกจำนวน Pcs."></div>
-                <div class="form-group"><label>Assign</label><input type="number" id="assign" placeholder="กรอกจำนวน Pcs."></div>
-                <div class="form-group"><label>Delivered To Buyer</label><input type="number" id="delivered" placeholder="กรอกจำนวน Pcs."></div>
-                <div class="form-group"><label>2W Actual</label><input type="number" id="actual2w" placeholder="กรอกจำนวน คน"></div>
-                <div class="form-group"><label>4W Actual</label><input type="number" id="actual4w" placeholder="กรอกจำนวน คน"></div>
-                <div class="form-group"><label>Issue</label><textarea id="issue" rows="3"></textarea></div>
-                <div class="form-group"><label>Action</label><textarea id="action" rows="3"></textarea></div>
+                <div class="form-group">
+                    <label>Hub</label>
+                    <input type="text" id="hub" value="HBYAI-C">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="date">
+                </div>
+                <div class="form-group">
+                    <label>Time</label>
+                    <input type="time" id="time">
+                </div>
+                <div class="form-group">
+                    <label>In Hub</label>
+                    <input type="number" id="inHub" placeholder="กรอกจำนวน Pcs.">
+                </div>
+                <div class="form-group">
+                    <label>Assign</label>
+                    <input type="number" id="assign" placeholder="กรอกจำนวน Pcs.">
+                </div>
+                <div class="form-group">
+                    <label>Delivered To Buyer</label>
+                    <input type="number" id="delivered" placeholder="กรอกจำนวน Pcs.">
+                </div>
+                <div class="form-group">
+                    <label>2W Actual</label>
+                    <input type="number" id="actual2w" placeholder="กรอกจำนวน คน">
+                </div>
+                <div class="form-group">
+                    <label>4W Actual</label>
+                    <input type="number" id="actual4w" placeholder="กรอกจำนวน คน">
+                </div>
+                <div class="form-group">
+                    <label>Issue</label>
+                    <textarea id="issue" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Action</label>
+                    <textarea id="action" rows="3"></textarea>
+                </div>
+
                 <button type="button" class="btn btn-orange" onclick="generateReport()">Generate Report</button>
                 <button type="button" class="btn btn-green" onclick="copyReport()">📋 Copy Report</button>
                 <button type="button" class="btn btn-red" onclick="clearReport()">🗑️ Clear Data</button>
             </form>
         </div>
+
+        <!-- ฝั่งขวา: แสดงผลลัพธ์ -->
         <div class="result-section">
             <h3>Result</h3>
             <textarea id="resultBox" readonly placeholder="ผลลัพธ์รายงานจะแสดงที่นี่..."></textarea>
         </div>
     </div>
-    <div class="footer"><p>Version 1.0</p><p>By Grace ABYAI-B</p></div>
+
+    <div class="footer">
+        <p>Version 1.0</p>
+        <p>By MAX HBYAI-C</p>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
