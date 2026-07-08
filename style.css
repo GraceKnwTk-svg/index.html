@@ -1,0 +1,19 @@
+body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+.container { display: flex; gap: 30px; max-width: 1000px; width: 100%; }
+.form-section, .result-section { background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+.form-section { flex: 1; }
+.result-section { flex: 1.2; display: flex; flex-direction: column; }
+.title { margin: 0; color: #ff6600; font-size: 24px; text-align: center; }
+.subtitle { font-size: 14px; font-weight: bold; color: #555; text-align: center; margin-bottom: 25px; }
+h3 { margin-top: 0; color: #333; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; }
+input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; background-color: #fafafa; }
+input:focus, textarea:focus { outline: none; border-color: #ff6600; background-color: #fff; }
+.btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; color: white; cursor: pointer; margin-top: 12px; font-size: 15px; }
+.btn-orange { background-color: #ff6600; }
+.btn-green { background-color: #24b35f; }
+.btn-red { background-color: #d93838; }
+#resultBox { flex: 1; min-height: 500px; border: 1px solid #e2d2b3; background-color: #fffdf9; padding: 15px; font-family: monospace; font-size: 13px; line-height: 1.6; resize: none; color: #333; }
+.footer { text-align: center; margin-top: 30px; font-size: 11px; color: #999; line-height: 0.5; }
+@media (max-width: 768px) { .container { flex-direction: column; } }
