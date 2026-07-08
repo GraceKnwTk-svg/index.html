@@ -2,13 +2,13 @@
 function initDateTime() {
     const now = new Date();
     
-    // ตั้งค่าวันที่ (รูปแบบ YYYY-MM-DD สำหรับอินพุตประเภท date)
+    // ดึงปี เดือน วัน ปัจจุบันของเครื่อง
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     document.getElementById('date').value = `${year}-${month}-${day}`;
     
-    // ตั้งค่าเวลา (รูปแบบ HH:MM สำหรับอินพุตประเภท time)
+    // ดึงชั่วโมง และ นาที ปัจจุบันของเครื่อง
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('time').value = `${hours}:${minutes}`;
@@ -84,7 +84,7 @@ WL เฉลี่ย 70:30
 • 4W : 30%
 
 SLA : 96.00%
-PDTY Assign : ${pdtyAssign} (Target: 170)
+PDTY Assign : ${pdtyAssign} (Target: 197)
 
 Issue หน้างาน : ${issue}
 Action : ${action}`;
@@ -117,6 +117,6 @@ function clearReport() {
         
         // ล้างแล้วรีเซ็ตวันเวลาปัจจุบันให้ใหม่ทันที
         initDateTime();
-        document.getElementById('hub').value = 'ABYAI-B';
+        document.getElementById('hub').value = 'HBYAI-C';
     }
 }
