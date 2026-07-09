@@ -83,8 +83,8 @@ WL เฉลี่ย 70:30
 • 4W : ${wl4w.toLocaleString()}
 
 %2W (โดยประมาณ)
-• 2W : 70%
-• 4W : 30%
+ • 2W : ${wl2wPercent}%
+ • 4W : ${wl4wPercent}%
 
 SLA : 96.00%
 PDTY Assign : ${pdtyAssign} (Target: 197)
