@@ -1,29 +1,37 @@
-// ฟังก์ชันสำหรับตั้งค่า วันที่ และ เวลา ปัจจุบันโดยอัตโนมัติเมื่อเปิดเว็บ
-function initDateTime() {
-    const now = new Date();
-    
-    // ดึงปี เดือน วัน ปัจจุบันของเครื่อง
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    document.getElementById('date').value = `${year}-${month}-${day}`;
-    
-    // ดึงชั่วโมง และ นาที ปัจจุบันของเครื่อง
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('time').value = `${hours}:${minutes}`;
+// ฟังก์ชันดึงวันเวลาปัจจุบันมาใส่ในช่อง input ทันที (อัปเดตแก้วิธีจัดการค่า String วันที่ให้เสถียรขึ้น)
+function setCurrentDateTime() {
+    try {
+        const now = new Date();
+        
+        // แปลงเขตเวลาให้ตรงกับประเทศไทย (GMT+7)
+        const tzOffset = now.getTimezoneOffset() * 60000;
+        const localISODate = new Date(now.getTime() - tzOffset).toISOString();
+        
+        // ตั้งค่าวันที่ (YYYY-MM-DD)
+        const todayDate = localISODate.split('T')[0];
+        document.getElementById('date').value = todayDate;
+        
+        // ตั้งค่าเวลา (HH:MM)
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').value = `${hours}:${minutes}`;
+    } catch (e) {
+        console.log("Error setting date/time:", e);
+    }
 }
 
-// สั่งให้ระบบทำงานทันทีที่โหลดไฟล์ JavaScript นี้เสร็จ
-initDateTime();
+// สั่งให้ระบบทำงานตั้งแต่วินาทีแรกที่หน้าเว็บเปิดขึ้นมา
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setCurrentDateTime);
+} else {
+    setCurrentDateTime();
+}
 
 function generateReport() {
-    // 1. ดึงค่าจากฟอร์มฝั่งซ้ายมาเก็บไว้
     const hub = document.getElementById('hub').value || '-';
     const dateInput = document.getElementById('date').value;
     const time = document.getElementById('time').value || '--:--';
     
-    // แปลงค่าอินพุตให้เป็นตัวเลข (ถ้าไม่มีให้เป็น 0)
     const inHub = parseInt(document.getElementById('inHub').value) || 0;
     const assign = parseInt(document.getElementById('assign').value) || 0;
     const delivered = parseInt(document.getElementById('delivered').value) || 0;
@@ -33,7 +41,7 @@ function generateReport() {
     const issue = document.getElementById('issue').value || '-';
     const action = document.getElementById('action').value || '-';
 
-    // 2. [สูตรคำนวณอัตโนมัติ] 
+    // คำนวณค่าพื้นฐานอัตโนมัติ
     const noAssign = inHub - assign; 
     const hcActive = actual2w + actual4w; 
     
@@ -42,12 +50,26 @@ function generateReport() {
         deliveryRate = ((delivered / assign) * 100).toFixed(1);
     }
 
-    // คำนวณ Workload เฉลี่ย (WL เฉลี่ย 70:30)
+    // [สูตรใหม่] คำนวณชิ้นงานรวมตามสัดส่วน 70:30 จากเป้า Assign ทั้งหมด ก่อนนำไปหาค่าเฉลี่ยรายบุคคล
     let wl2w = 0;
     let wl4w = 0;
+    let wl2wPercent = 0;
+    let wl4wPercent = 0;
+
     if (assign > 0) {
-        wl2w = Math.round(assign * 0.7);
-        wl4w = Math.round(assign * 0.3);
+        const totalWl2wPieces = assign * 0.7; // ยอดงานรวมฝั่ง 2W (70%)
+        const totalWl4wPieces = assign * 0.3; // ยอดงานรวมฝั่ง 4W (30%)
+
+        // หารเฉลี่ยแยกตามจำนวนคนขับจริงในแต่ละกลุ่ม (ถ้าไม่มีคนขับในกลุ่มนั้นให้ตั้งค่าเป็น 0)
+        wl2w = actual2w > 0 ? Math.round(totalWl2wPieces / actual2w) : 0;
+        wl4w = actual4w > 0 ? Math.round(totalWl4wPieces / actual4w) : 0;
+        
+        // คำนวณเปอร์เซ็นต์สัดส่วนภาระงานจริง (เทียบจากผลลัพธ์เฉลี่ยชิ้นต่อคน)
+        const totalWlPerHead = wl2w + wl4w;
+        if (totalWlPerHead > 0) {
+            wl2wPercent = Math.round((wl2w / totalWlPerHead) * 100);
+            wl4wPercent = Math.round((wl4w / totalWlPerHead) * 100);
+        }
     }
 
     let pdtyAssign = 0;
@@ -55,7 +77,6 @@ function generateReport() {
         pdtyAssign = Math.round(assign / hcActive);
     }
 
-    // 3. จัดรูปแบบวันที่ให้ออกมาเป็น "08 Jul 2026"
     let formattedDate = '-';
     if(dateInput) {
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -63,31 +84,31 @@ function generateReport() {
         formattedDate = `${String(d.getDate()).padStart(2, '0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
 
-    // 4. แสดงผลลัพธ์ในช่องด้านขวา (Result)
+    // ประกอบข้อความโครงสร้างรายงานประจำวัน (จับกลุ่มและเว้นวรรคตามฟอร์แมตคลังอื่นเป๊ะๆ)
     const textOutput = `Daily Report - ${formattedDate} (${time})
 Hub : ${hub}
 
 In Hub : ${inHub.toLocaleString()} Pcs.
 Assign : ${assign.toLocaleString()} Pcs.
-No Assign : ${noAssign.toLocaleString()} Pcs.
+No Assign : ${noAssign <= 0 ? '-' : noAssign.toLocaleString()} Pcs.
 Normal : 0
 
 HC Active : ${hcActive} คน
-• 2W : ${actual2w}
-• 4W : ${actual4w}
+ • 2W : ${actual2w}
+ • 4W : ${actual4w}
 
 Delivered To Buyer : ${delivered.toLocaleString()} Pcs. (${deliveryRate}%)
 
 WL เฉลี่ย 70:30
-• 2W : ${wl2w.toLocaleString()}
-• 4W : ${wl4w.toLocaleString()}
+ • 2W : ${wl2w.toLocaleString()}
+ • 4W : ${wl4w.toLocaleString()}
 
 %2W (โดยประมาณ)
  • 2W : ${wl2wPercent}%
  • 4W : ${wl4wPercent}%
 
 SLA : 96.00%
-PDTY Assign : ${pdtyAssign} (Target: 197)
+PDTY Assign : ${pdtyAssign} (Target: 170)
 
 Issue หน้างาน : ${issue}
 Action : ${action}`;
@@ -118,8 +139,7 @@ function clearReport() {
         document.getElementById('action').value = '';
         document.getElementById('resultBox').value = '';
         
-        // ล้างแล้วรีเซ็ตวันเวลาปัจจุบันให้ใหม่ทันที
-        initDateTime();
-        document.getElementById('hub').value = 'HBYAI-C';
+        setCurrentDateTime();
+        document.getElementById('hub').value = 'ABYAI-B';
     }
 }
